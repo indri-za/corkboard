@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Lint
+        run: scripts/swift-format.sh lint
+
+      - name: Test
+        run: swift test
+
+      - name: Build and sign
+        run: |
+          swift build -c release
+          mkdir -p dist
+          cp -L .build/release/corkboard dist/corkboard
+          codesign --force --sign - dist/corkboard
+          codesign -dv dist/corkboard
+          (cd dist && zip -j ../corkboard-macos.zip corkboard)
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            corkboard-macos.zip
