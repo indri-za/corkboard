@@ -114,7 +114,9 @@ final class ProjectsPaletteController: ObservableObject {
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.hidesOnDeactivate = true
-        panel.isMovableByWindowBackground = true
+        // A background drag fights the favourite reorder and creeps the panel along.
+        // The leather header moves the panel itself.
+        panel.isMovableByWindowBackground = false
         panel.isReleasedWhenClosed = false
         panel.becomesKeyOnlyIfNeeded = true
         panel.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]

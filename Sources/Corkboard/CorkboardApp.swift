@@ -73,10 +73,6 @@ struct CorkboardApp: App {
                     ProjectOpener.open(store: store, library: library)
                 }
                 .keyboardShortcut("o")
-                Button(palette.isVisible ? "Hide Projects" : "Show Projects") {
-                    palette.toggle()
-                }
-                .keyboardShortcut("b")
                 Button("Reload Board") {
                     store.reload()
                 }
@@ -88,6 +84,12 @@ struct CorkboardApp: App {
                     }
                 }
                 .disabled(store.root == nil)
+            }
+            CommandGroup(after: .sidebar) {
+                Button(palette.isVisible ? "Hide Projects" : "Show Projects") {
+                    palette.toggle()
+                }
+                .keyboardShortcut("b")
             }
         }
     }
