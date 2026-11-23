@@ -9,6 +9,14 @@ enum CorkboardMain {
             print("corkboard \(CorkboardVersion.current)")
             return
         }
+        if arguments.contains("--update") {
+            let report = UpdateClient.checkBlocking()
+            print(report.text)
+            if report.isFailure {
+                exit(1)
+            }
+            return
+        }
         CorkboardApp.main()
     }
 }

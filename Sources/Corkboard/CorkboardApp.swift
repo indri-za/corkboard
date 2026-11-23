@@ -70,6 +70,11 @@ struct CorkboardApp: App {
                     ])
                 }
             }
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") {
+                    UpdatePrompt.check()
+                }
+            }
             CommandGroup(replacing: .newItem) {
                 Button("New Ticket") {
                     store.selectedFilename = nil
