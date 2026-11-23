@@ -3,6 +3,8 @@ import SwiftUI
 
 struct BoardView: View {
     @ObservedObject var store: BoardStore
+    var library: ProjectLibraryController
+    var palette: ProjectsPaletteController
 
     var body: some View {
         ZStack {
@@ -83,6 +85,11 @@ struct BoardView: View {
                 }
                 Spacer()
                 if store.root != nil {
+                    RoundGlossButton(systemImage: "books.vertical", colors: Gloss.amber) {
+                        palette.toggle()
+                    }
+                    .help("Projects  ⌘B")
+                    .accessibilityLabel("Projects")
                     search
                     RoundGlossButton(systemImage: "plus", colors: Gloss.green) {
                         store.selectedFilename = nil
@@ -92,8 +99,15 @@ struct BoardView: View {
                 } else {
                     GlossyButton(title: "Open Project…", systemImage: "folder", colors: Gloss.blue)
                     {
-                        ProjectOpener.open(store: store)
+                        ProjectOpener.open(store: store, library: library)
                     }
+                    GlossyButton(
+                        title: "Projects", systemImage: "books.vertical", colors: Gloss.amber
+                    ) {
+                        palette.toggle()
+                    }
+                    .help("Projects  ⌘B")
+                    .accessibilityLabel("Projects")
                 }
             }
             .padding(.leading, 86)
@@ -171,8 +185,18 @@ struct BoardView: View {
                     .foregroundStyle(Ink.faded)
                     .lineLimit(2)
                     .truncationMode(.middle)
-                GlossyButton(title: "Open Project…", systemImage: "folder", colors: Gloss.green) {
-                    ProjectOpener.open(store: store)
+                HStack(spacing: 8) {
+                    GlossyButton(title: "Open Project…", systemImage: "folder", colors: Gloss.green)
+                    {
+                        ProjectOpener.open(store: store, library: library)
+                    }
+                    GlossyButton(
+                        title: "Projects", systemImage: "books.vertical", colors: Gloss.amber
+                    ) {
+                        palette.toggle()
+                    }
+                    .help("Projects  ⌘B")
+                    .accessibilityLabel("Projects")
                 }
                 .padding(.top, 4)
             }

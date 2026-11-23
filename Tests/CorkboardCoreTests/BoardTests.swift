@@ -173,6 +173,13 @@ final class BoardTests: XCTestCase {
         XCTAssertEqual(store.projectName, project.lastPathComponent)
     }
 
+    func testBootstrapLeavesAnEmptyDirectoryClosed() throws {
+        let empty = try makeDirectory()
+        let store = BoardStore()
+        store.bootstrap(currentDirectory: empty, arguments: [], environment: [:])
+        XCTAssertNil(store.root)
+    }
+
     func testMarkdownBlocks() {
         let source = """
             # Title

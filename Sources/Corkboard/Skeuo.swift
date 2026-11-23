@@ -539,7 +539,7 @@ enum TicketActions {
 enum ProjectOpener {
     static let panelDirectoryKey = "corkboard.panelDirectory"
 
-    static func open(store: BoardStore) {
+    static func open(store: BoardStore, library: ProjectLibraryController) {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
@@ -560,5 +560,6 @@ enum ProjectOpener {
         }
         UserDefaults.standard.set(root.deletingLastPathComponent().path, forKey: panelDirectoryKey)
         store.load(root: root)
+        library.noteOpened(root: root)
     }
 }
