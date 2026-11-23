@@ -21,7 +21,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-@main
 struct CorkboardApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @StateObject private var store: BoardStore
@@ -62,6 +61,15 @@ struct CorkboardApp: App {
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1280, height: 840)
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About Corkboard") {
+                    NSApp.orderFrontStandardAboutPanel(options: [
+                        .applicationName: "Corkboard",
+                        .applicationVersion: CorkboardVersion.current,
+                        .applicationIcon: AppIcon.render(),
+                    ])
+                }
+            }
             CommandGroup(replacing: .newItem) {
                 Button("New Ticket") {
                     store.selectedFilename = nil
