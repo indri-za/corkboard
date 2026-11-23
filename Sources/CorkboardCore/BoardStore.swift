@@ -28,11 +28,7 @@ public final class BoardStore: ObservableObject {
 
     public var projectName: String? {
         guard let root else { return nil }
-        if root.lastPathComponent == "tickets" {
-            let parent = root.deletingLastPathComponent().lastPathComponent
-            return parent.isEmpty ? "tickets" : parent
-        }
-        return root.lastPathComponent
+        return TicketRoot.projectName(forRoot: root)
     }
 
     public var selected: Ticket? {

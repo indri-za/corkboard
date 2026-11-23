@@ -181,6 +181,14 @@ remember the folder it last started in (`UserDefaults` key
 `corkboard.panelDirectory`) and that is only the panel's starting
 directory.
 
+Favourites and recents live in a floating palette, shown and hidden with
+⌘B (File → Show Projects). Opening a board records it. Pinning keeps it,
+and the pins can be reordered by dragging. Neither list is read when the
+app chooses a folder at launch. The list is `UserDefaults` key
+`corkboard.projectLibrary`. The palette is a utility panel, not a second
+document: closing the board closes it, and the app still quits when the
+last board window closes.
+
 Opening the binary from Finder or Spotlight does not use a project as the
 working directory. The board then shows the empty cork and asks you to open
 a folder. Use the terminal when you want the current directory.
@@ -254,7 +262,8 @@ product change, not a cleanup.
 - **+** on a tape creates a ticket in that column. ⌘N creates one in To Do.
 - The search field filters every column. Escape closes the new-ticket
   sheet, then the open note, then clears the search.
-- ⌘O opens a project. ⌘R reloads. Show Tickets in Finder is in the File menu.
+- ⌘O opens a project. ⌘B shows or hides the projects palette. ⌘R reloads.
+  Show Tickets in Finder is in the File menu.
 - Hover straightens a note and lifts it. Tilt and paper colour are a stable
   hash of the filename, so a reload does not reshuffle the board.
 
@@ -273,9 +282,12 @@ Sources/CorkboardCore/          Foundation only. This is the tested library.
   TicketRoot.swift              finding a board from a path or a walk upward
   MarkdownDocument.swift        block parser used by the detail view
   BoardStore.swift              load, poll signature, move, create
+  ProjectLibrary.swift          favourites, recents, and their UserDefaults store
 Sources/Corkboard/              SwiftUI + AppKit. Not unit tested.
   CorkboardApp.swift            @main, boot, menu commands
   BoardView.swift               window, header, empty state, one-second poll
+  ProjectsPalette.swift         the floating projects palette
+  ProjectsPaletteController.swift  panel, ⌘B, frame memory
   ColumnView.swift              tape, notes, drag and drop
   StickyNoteView.swift
   DetailView.swift
@@ -344,6 +356,7 @@ write straight into the folders.
 - Moving a card must not change file bytes.
 - Do not auto-commit, and do not shell out to git.
 - Do not reopen the previous project when the working directory has no board.
+  The projects palette is opened on purpose. It is not a launch source.
 - `placeholder.md` stays invisible.
 - Parsing must tolerate the variations above. A new ticket feature that only
   understands one template will hide real notes.

@@ -54,4 +54,17 @@ public enum TicketRoot {
         }
         return nil
     }
+
+    /// The folder a person would recognise. A `tickets` directory is named after its parent.
+    public static func projectName(forRoot root: URL) -> String {
+        let root = root.standardizedFileURL
+        if root.lastPathComponent == "tickets" {
+            let parent = root.deletingLastPathComponent().lastPathComponent
+            if parent.isEmpty || parent == "/" {
+                return "tickets"
+            }
+            return parent
+        }
+        return root.lastPathComponent
+    }
 }
