@@ -3,6 +3,8 @@ import CorkboardCore
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var menuObserver: NSObjectProtocol?
+
     func applicationWillFinishLaunching(_ notification: Notification) {
         // A bare executable starts as an accessory. Promote it before SwiftUI
         // makes the board window. Doing this later closes that window.
@@ -13,7 +15,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.applicationIconImage = AppIcon.render()
+        AppMenuTitle.apply()
+        // SwiftUI writes the process name into the menu after launch.
+        DispatchQueue.main.async {
+            AppMenuTitle.apply()
+        }
+        menuObserver = NotificationCenter.default.addObserver(
+            forName: NSMenu.didBeginTrackingNotification, object: nil, queue: .main
+        ) { _ in
+            AppMenuTitle.apply()
+        }
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    deinit {
+        if let menuObserver {
+            NotificationCenter.default.removeObserver(menuObserver)
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -21,7 +39,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-@main
 struct CorkboardApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @StateObject private var store: BoardStore
@@ -62,6 +79,39 @@ struct CorkboardApp: App {
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1280, height: 840)
         .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About Corkboard") {
+                    NSApp.orderFrontStandardAboutPanel(options: [
+                        .applicationName: "Corkboard",
+                        .applicationVersion: CorkboardVersion.current,
+                        .applicationIcon: AppIcon.render(),
+                    ])
+                }
+            }
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") {
+                    UpdatePrompt.check()
+                }
+            }
+            CommandGroup(replacing: .appVisibility) {
+                Button("Hide Corkboard") {
+                    NSApp.hide(nil)
+                }
+                .keyboardShortcut("h")
+                Button("Hide Others") {
+                    NSApp.hideOtherApplications(nil)
+                }
+                .keyboardShortcut("h", modifiers: [.command, .option])
+                Button("Show All") {
+                    NSApp.unhideAllApplications(nil)
+                }
+            }
+            CommandGroup(replacing: .appTermination) {
+                Button("Quit Corkboard") {
+                    NSApp.terminate(nil)
+                }
+                .keyboardShortcut("q")
+            }
             CommandGroup(replacing: .newItem) {
                 Button("New Ticket") {
                     store.selectedFilename = nil
