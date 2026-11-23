@@ -1,6 +1,6 @@
 import Foundation
 
-/// Published version, without a leading `v`. Keep it aligned with the release tag.
+/// Fallback for local builds. The release workflow overwrites this from the tag.
 public enum CorkboardVersion {
     public static let current = "0.2.0"
 }

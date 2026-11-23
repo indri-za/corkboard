@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Stamp version from the tag
+        run: scripts/stamp-version.sh
+
       - name: Lint
         run: scripts/swift-format.sh lint
 
