@@ -53,7 +53,7 @@ corkboard --version
 corkboard --update
 ```
 
-Check for Updates… is in the app menu. When a newer release exists, it opens the release page.
+Check for Updates… is in the Corkboard menu. When a newer release exists, it opens the release page.
 
 Once open, use **File → Open Project…** (⌘O) to switch boards. **⌘B** shows a floating palette of pinned projects and boards you have opened. Pick one to load it. Corkboard still starts in the folder you launched it from, and does not reopen the last project on its own.
 
