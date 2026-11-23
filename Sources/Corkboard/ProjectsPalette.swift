@@ -1,3 +1,4 @@
+import AppKit
 import CorkboardCore
 import SwiftUI
 import UniformTypeIdentifiers
@@ -36,6 +37,8 @@ struct ProjectsPaletteView: View {
     private var header: some View {
         ZStack {
             LeatherBar()
+            PaletteHeaderDrag()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 10) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Projects")
@@ -48,7 +51,9 @@ struct ProjectsPaletteView: View {
                         .foregroundStyle(Ink.gold.opacity(0.72))
                         .lineLimit(1)
                 }
+                .allowsHitTesting(false)
                 Spacer(minLength: 8)
+                    .allowsHitTesting(false)
                 if store.root != nil {
                     GlossyButton(
                         title: currentIsPinned ? "Unpin" : "Pin",
@@ -326,6 +331,24 @@ struct ProjectsPaletteView: View {
     }
 
     static let dragPrefix = "corkboard-favourite:"
+}
+
+private struct PaletteHeaderDrag: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        PaletteDragView()
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {}
+}
+
+private final class PaletteDragView: NSView {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        true
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        window?.performDrag(with: event)
+    }
 }
 
 private struct FavouriteDrag: ViewModifier {
