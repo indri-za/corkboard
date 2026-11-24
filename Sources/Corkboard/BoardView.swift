@@ -97,6 +97,10 @@ struct BoardView: View {
                     }
                     .help("New ticket  ⌘N")
                 } else {
+                    GlossyButton(title: "Create Board", systemImage: "plus", colors: Gloss.green) {
+                        createBoardHere()
+                    }
+                    .help("Create a tickets folder here")
                     GlossyButton(title: "Open Project…", systemImage: "folder", colors: Gloss.blue)
                     {
                         ProjectOpener.open(store: store, library: library)
@@ -186,7 +190,11 @@ struct BoardView: View {
                     .lineLimit(2)
                     .truncationMode(.middle)
                 HStack(spacing: 8) {
-                    GlossyButton(title: "Open Project…", systemImage: "folder", colors: Gloss.green)
+                    GlossyButton(title: "Create Board", systemImage: "plus", colors: Gloss.green) {
+                        createBoardHere()
+                    }
+                    .help("Create a tickets folder here")
+                    GlossyButton(title: "Open Project…", systemImage: "folder", colors: Gloss.blue)
                     {
                         ProjectOpener.open(store: store, library: library)
                     }
@@ -215,6 +223,17 @@ struct BoardView: View {
             .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
             .rotationEffect(.degrees(-1.2))
             Spacer()
+        }
+    }
+
+    private func createBoardHere() {
+        let directory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        do {
+            let root = try TicketBoard.create(in: directory)
+            store.load(root: root)
+            library.noteOpened(root: root)
+        } catch {
+            store.showBanner(error.localizedDescription)
         }
     }
 
