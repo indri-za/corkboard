@@ -46,6 +46,14 @@ export CORKBOARD_TICKETS=~/projects/my-app/tickets
 corkboard
 ```
 
+Create a `tickets/` folder, with the four columns and a placeholder in each, in the current directory:
+
+```sh
+corkboard --init
+```
+
+A path creates it there instead: `corkboard --init path/to/project`. Files already in those folders are left alone. The same action is the Create Board button when a folder has no board yet.
+
 Print the version, or check the latest GitHub release:
 
 ```sh
