@@ -3,7 +3,7 @@ import CorkboardCore
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var menuObserver: NSObjectProtocol?
+    private var menuObservers: [NSObjectProtocol] = []
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         // A bare executable starts as an accessory. Promote it before SwiftUI
@@ -15,22 +15,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.applicationIconImage = AppIcon.render()
-        AppMenuTitle.apply()
-        // SwiftUI writes the process name into the menu after launch.
-        DispatchQueue.main.async {
-            AppMenuTitle.apply()
-        }
-        menuObserver = NotificationCenter.default.addObserver(
-            forName: NSMenu.didBeginTrackingNotification, object: nil, queue: .main
-        ) { _ in
-            AppMenuTitle.apply()
+        AppMenuTitle.schedule()
+        let menuNotes: [Notification.Name] = [
+            NSMenu.didAddItemNotification,
+            NSMenu.didChangeItemNotification,
+            NSMenu.didBeginTrackingNotification,
+        ]
+        menuObservers = menuNotes.map { name in
+            NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) {
+                _ in
+                AppMenuTitle.schedule()
+            }
         }
         NSApp.activate(ignoringOtherApps: true)
     }
 
     deinit {
-        if let menuObserver {
-            NotificationCenter.default.removeObserver(menuObserver)
+        for observer in menuObservers {
+            NotificationCenter.default.removeObserver(observer)
         }
     }
 
